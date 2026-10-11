@@ -1,0 +1,18 @@
+# Minimal source/demo dependencies.
+# The original project used separate CRNN (Python 3.10) and YOLO (Python 3.8) environments.
+# For a modern portfolio setup, Python 3.10 is recommended.
+
+numpy>=1.24,<2.0
+pillow>=10.0
+opencv-python>=4.8
+matplotlib>=3.7
+pdf2image>=1.17
+music21>=9.1
+pretty-midi>=0.2.10
+midiutil>=1.2.1
+editdistance>=0.8
+tqdm>=4.66
+PyYAML>=6.0
+ultralytics>=8.3,<9
+torch>=2.4,<2.6
+torchvision>=0.19,<0.21

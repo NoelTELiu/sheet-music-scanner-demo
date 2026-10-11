@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+.env
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Datasets and generated outputs
+data/
+dataset/
+datasets/
+train/
+valid/
+test/
+runs/
+staff_detection/
+detection_results/
+stave_semantic_results/
+midi_results/
+output_pdf/
+output_png/
+output_xml/
+split_output/
+aug_dataset/
+
+# Model/runtime assets: intentionally not versioned in this portfolio mirror
+*.pt
+*.pth
+*.onnx
+*.ckpt
+*.jar
+*.tgz
+*.tar.gz
+
+# Training/runtime logs
+*.log
+*.tfevents.*
+logs/
+checkpoints/
+
+# Temporary files
+*.tmp
+*.bak
