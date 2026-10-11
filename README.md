@@ -2,6 +2,8 @@
 
 An end-to-end **Optical Music Recognition (OMR)** project that detects musical staves in a score image, recognizes notation symbols, and converts the recognized sequence into symbolic music and MIDI.
 
+This repository is a lightweight source release of the completed project, prepared primarily for **code inspection and academic portfolio presentation**.
+
 ## Pipeline
 
 ```mermaid
@@ -19,7 +21,7 @@ The project contains four main components:
 - **Preprocessing** — splits MusicXML/MXL scores, renders score images, generates semantic labels, packages datasets, and applies augmentation.
 - **Staff detection** — uses YOLO to locate and crop individual staff regions from a score image.
 - **Music-symbol recognition** — uses a CRNN with bidirectional LSTMs and CTC decoding to recognize semantic or agnostic symbol sequences.
-- **Postprocessing** — converts semantic predictions to MEI/MIDI and provides an end-to-end demo pipeline.
+- **Postprocessing** — converts semantic predictions to MEI/MIDI and connects the recognition stages into an end-to-end inference pipeline.
 
 ## Repository structure
 
@@ -29,8 +31,8 @@ The project contains four main components:
 ├── yolo/                    # Staff detector training and evaluation
 ├── crnn/                    # CRNN training and evaluation
 ├── postprocess/             # Semantic-to-MEI/MIDI conversion
-├── demo/                    # End-to-end inference pipeline
-├── models/                  # Runtime model locations
+├── demo/                    # End-to-end inference interface
+├── models/                  # Expected runtime model locations
 ├── assets/                  # Third-party runtime assets
 ├── results/                 # Representative training results
 ├── scripts/                 # Utility scripts
@@ -38,17 +40,32 @@ The project contains four main components:
 └── requirements.txt
 ```
 
-## Run the demo
+## Inference pipeline
 
-The demo processes one score image through staff detection, CRNN recognition, and optional MIDI conversion.
+This repository preserves the end-to-end inference pipeline used in the original project, from staff detection to symbol recognition and MIDI conversion.
 
-### 1. Check runtime assets
+It is intended primarily for **source review and portfolio presentation**, rather than as a self-contained reproduction package. Running the pipeline locally requires the original trained model weights, the matching CRNN tokenizer, and the third-party semantic converter, which are not distributed in this repository.
+
+The command-line interface is retained to document how the original project components were connected and executed.
+
+### Runtime asset check
 
 ```bash
 python -m demo.run_pipeline --check-only
 ```
 
-### 2. Run the full pipeline
+Expected runtime assets:
+
+```text
+models/yolo/best.pt
+models/crnn/best_model.pt
+models/crnn/tokenizer.json
+assets/omr-3.0-SNAPSHOT.jar     # required only for MIDI conversion
+```
+
+### Example pipeline invocation
+
+With the corresponding runtime assets available, the complete inference pipeline can be invoked with:
 
 ```bash
 python -m demo.run_pipeline \
@@ -70,7 +87,7 @@ demo_output/
 └── midi/                        # Final MIDI output
 ```
 
-To stop after symbol recognition and skip MIDI conversion:
+Symbol recognition can also be run without the MIDI conversion stage:
 
 ```bash
 python -m demo.run_pipeline \
@@ -81,10 +98,7 @@ python -m demo.run_pipeline \
   --skip-midi
 ```
 
-See [`demo/README.md`](demo/README.md) for the demo-specific setup.
-
-> **Runtime asset note**  
-> Trained model weights, the matching CRNN tokenizer, datasets, and the third-party semantic-converter JAR are not included in this repository. Their expected locations are documented in [`models/README.md`](models/README.md) and [`assets/README.md`](assets/README.md).
+See [`demo/README.md`](demo/README.md) for the expected runtime assets and pipeline interface.
 
 ## Training
 
@@ -118,17 +132,33 @@ The retained semantic training run reached its minimum validation loss at **epoc
 Example preprocessing commands:
 
 ```bash
-python -m preprocess.split_measure --input-dir input_mxl --output-dir split_xml --measures-per-file 1
-python -m preprocess.semantic --input-dir split_xml --output-dir semantic_labels
-python -m preprocess.package --labels semantic_labels --images rendered_png --output dataset
-python -m preprocess.addnoise --source dataset --output aug_dataset --noise-factor 0.3
+python -m preprocess.split_measure \
+  --input-dir input_mxl \
+  --output-dir split_xml \
+  --measures-per-file 1
+
+python -m preprocess.semantic \
+  --input-dir split_xml \
+  --output-dir semantic_labels
+
+python -m preprocess.package \
+  --labels semantic_labels \
+  --images rendered_png \
+  --output dataset
+
+python -m preprocess.addnoise \
+  --source dataset \
+  --output aug_dataset \
+  --noise-factor 0.3
 ```
 
 Rendering MusicXML to PDF requires MuseScore. PDF rasterization may also require Poppler, depending on the platform.
 
 ## Training results
 
-`results/` contains representative training curves and history files for the semantic and agnostic CRNN experiments. Large checkpoints and TensorBoard logs are omitted from the repository.
+`results/` contains representative training curves and history files for the semantic and agnostic CRNN experiments.
+
+Large checkpoints, datasets, caches, and TensorBoard logs are not included in this repository.
 
 ## Team contributions
 
@@ -140,10 +170,16 @@ Rendering MusicXML to PDF requires MuseScore. PDF rasterization may also require
 - **Chi-Lun Chen** — automated labeling program for the CRNN dataset.
 - **Shared** — dataset collection, project proposal preparation, and video presentation.
 
-## Project release note
+## Release scope
 
-This repository is prepared for source review and academic portfolio presentation. It includes the implementation and representative training results, while large datasets, checkpoints, caches, and third-party binaries are kept outside the repository.
+This repository is a lightweight source release of the completed project, prepared for **code inspection and academic portfolio presentation**.
+
+It includes the core implementation, pipeline structure, training code, and representative training records. Datasets, trained checkpoints, matching tokenizer assets, full environment snapshots, and third-party binaries are not included.
+
+As a result, this repository is **not intended to provide exact experimental reproduction on its own**. The included commands document how the original project components were connected and executed.
 
 ## License / third-party material
 
-No new open-source license is added on behalf of the original project team. Third-party datasets, libraries, pretrained models, and the semantic converter remain subject to their respective terms.
+No new open-source license is added on behalf of the original project team.
+
+Third-party datasets, libraries, pretrained models, and the semantic converter remain subject to their respective terms.
